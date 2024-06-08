@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useDuckDb } from "duckdb-wasm-kit";
+import { useParams } from "react-router-dom";
 import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 
@@ -8,11 +9,12 @@ const App: React.FC = () => {
 	const [queryResult, setQueryResult] = useState<any[]>([]);
 	const [error, setError] = useState<string | null>(null);
 	const [initialized, setInitialized] = useState(false);
+	const { filename } = useParams<{ filename: string }>();
 
 	const editor = useEditor({
 		extensions: [StarterKit],
 		content: `
-      SELECT * FROM rows;
+      SELECT * FROM ${filename || "data"};
     `,
 	});
 
@@ -22,14 +24,20 @@ const App: React.FC = () => {
 				try {
 					const c = await db.connect();
 
-					const streamResponse = await fetch("/masterq/data.json");
+					const filePath = filename
+						? `/masterq/${filename}.json`
+						: "/masterq/data.json"; // パスが指定されていない場合は data.json を使用する
+
+					const streamResponse = await fetch(filePath);
+
 					if (!streamResponse.ok) {
 						throw new Error("Network response was not ok");
 					}
-					const buffer = new Uint8Array(await streamResponse.arrayBuffer());
 
-					await db.registerFileBuffer("rows.json", buffer);
-					await c.insertJSONFromPath("rows.json", { name: "rows" });
+					const buffer = new Uint8Array(await streamResponse.arrayBuffer());
+					const tableName = filename ? filename : "data"; // テーブル名を動的に設定
+					await db.registerFileBuffer(`${tableName}.json`, buffer);
+					await c.insertJSONFromPath(`${tableName}.json`, { name: tableName });
 
 					await c.close();
 					setInitialized(true);
@@ -44,17 +52,18 @@ const App: React.FC = () => {
 		}
 
 		initializeDatabase();
-	}, [db]);
+	}, [db, filename]);
 
 	const runQueries = async (query: string) => {
 		if (db && query) {
 			try {
 				const c = await db.connect();
-				// クエリを実行
+
 				const arrowResult = await c.query(query);
 				const jsonResult = arrowResult.toArray().map((row) => row.toJSON());
 				setQueryResult(jsonResult);
-				setError(null); // エラーをクリア
+				setError(null);
+
 				await c.close();
 			} catch (err) {
 				if (err instanceof Error) {
@@ -69,13 +78,14 @@ const App: React.FC = () => {
 	useEffect(() => {
 		// 初期クエリを実行
 		if (initialized) {
-			runQueries("SELECT * FROM rows;");
+			const tableName = filename ? filename : "data"; // テーブル名を動的に設定
+			runQueries(`SELECT * FROM ${tableName};`);
 		}
-	}, [initialized]);
+	}, [initialized, filename]);
 
 	const handleRunQuery = () => {
 		if (editor) {
-			const query = editor.getText(); // getHTML() を getText() に変更してクエリテキストを取得
+			const query = editor.getText();
 			runQueries(query);
 		}
 	};
