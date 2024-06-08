@@ -1,18 +1,18 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { HashRouter, Route, Routes } from "react-router-dom";
 import App from "./App";
 
 const rootElement = document.getElementById("root");
 if (rootElement) {
 	ReactDOM.createRoot(rootElement).render(
 		<React.StrictMode>
-			<BrowserRouter basename="/masterq">
+			<HashRouter>
 				<Routes>
 					<Route path="/" element={<App />} />
 					<Route path="/:filename" element={<App />} />
 				</Routes>
-			</BrowserRouter>
+			</HashRouter>
 		</React.StrictMode>,
 	);
 }
