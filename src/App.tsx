@@ -22,7 +22,7 @@ const App: React.FC = () => {
 				try {
 					const c = await db.connect();
 
-					const streamResponse = await fetch("/data.json");
+					const streamResponse = await fetch("/masterq/data.json");
 					if (!streamResponse.ok) {
 						throw new Error("Network response was not ok");
 					}
