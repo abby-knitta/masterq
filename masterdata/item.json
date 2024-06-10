@@ -1,0 +1,37 @@
+[
+  {
+    "id": 1,
+    "name": "iPhone 13",
+    "description": "The latest iPhone with advanced features.",
+    "price": 999.99,
+    "category": "Electronics"
+  },
+  {
+    "id": 2,
+    "name": "Nike Air Max",
+    "description": "Comfortable and stylish running shoes.",
+    "price": 129.99,
+    "category": "Footwear"
+  },
+  {
+    "id": 3,
+    "name": "Kindle Paperwhite",
+    "description": "A high-resolution e-reader for book lovers.",
+    "price": 149.99,
+    "category": "Electronics"
+  },
+  {
+    "id": 4,
+    "name": "Levi's 501 Jeans",
+    "description": "Classic and durable denim jeans.",
+    "price": 69.99,
+    "category": "Clothing"
+  },
+  {
+    "id": 5,
+    "name": "Instant Pot Duo",
+    "description": "A versatile and convenient electric pressure cooker.",
+    "price": 89.99,
+    "category": "Kitchen"
+  }
+]
