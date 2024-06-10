@@ -118,7 +118,14 @@ const App: React.FC = () => {
       {queryResult.length > 0 && (
         <div>
           <h3>Query Result:</h3>
-          <pre>{JSON.stringify(queryResult, null, 2)}</pre>
+          <pre>
+            {JSON.stringify(
+              queryResult,
+              (key, value) =>
+                typeof value === "bigint" ? value.toString() : value,
+              2
+            )}
+          </pre>
         </div>
       )}
     </div>
